@@ -10,8 +10,11 @@
 
 using asio::ip::tcp;
 
-int main() {
+int main()
+{
+
     try {
+
         asio::io_context io_context;
         tcp::resolver resolver(io_context);
         tcp::resolver::results_type endpoints = resolver.resolve("127.0.0.1", "4242");
@@ -23,9 +26,8 @@ int main() {
         std::istream is(&buffer);
 
         std::cout << "Connected to the server." << std::endl;
-
-        // Separate thread for reading from the server
         std::thread reader([&]() {
+
             try {
                 while (true) {
                     asio::error_code error;
@@ -34,36 +36,42 @@ int main() {
                     if (error == asio::error::eof) {
                         std::cout << "Connection closed by server." << std::endl;
                         exit(42);
-                    } else if (error) {
+                    }
+
+                    else if (error) {
                         throw asio::system_error(error);
                     }
 
                     std::string line;
                     std::getline(is, line);
 
-                    // Remove the carriage return if present (for CRLF line endings)
                     if (!line.empty() && line.back() == '\r') {
                         line.pop_back();
                     }
 
                     std::cout << "Received: " << line << std::endl;
                 }
+
             } catch (std::exception& e) {
                 std::cerr << "Reader failed: " << e.what() << "\n";
             }
         });
 
-        // Main thread for writing to the server
         while (true) {
+
             std::string command;
             std::getline(std::cin, command);
-            if (command.empty()) continue;
 
-            command += "\n";  // Add newline character to command
+            if (command.empty())  {
+                continue;
+            }
+
+            command += "\n";
             asio::write(socket, asio::buffer(command));
         }
 
         reader.join();
+
     } catch (std::exception& e) {
         std::cerr << "Failed on: " << e.what() << "\n";
     }
