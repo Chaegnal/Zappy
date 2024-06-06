@@ -53,11 +53,9 @@ void Client::readServ()
             }
 
             _cmd.receiveResponse(line);
-            std::cout << "get -> " << line << std::endl;
-
         }
 
-    } catch (std::exception& e) {
+    } catch (std::exception &e) {
         std::cerr << "Reader failed: " << e.what() << "\n";
     }
 }
