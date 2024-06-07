@@ -51,8 +51,14 @@ void Client::readServ()
             if (!line.empty() && line.back() == '\r') {
                 line.pop_back();
             }
-
+            if (line.compare("ko") == 0) {
+                continue;
+            }
             _cmd.receiveResponse(line);
+
+            if (!line.compare("WELCOME")) {
+                asio::write(_socket, asio::buffer("GRAPHIC\n"));
+            }
         }
 
     } catch (std::exception &e) {
