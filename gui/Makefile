@@ -12,6 +12,8 @@ CXXFLAGS	=	-Wall -Wextra -Werror
 CPPFLAGS	=	-iquote ./include
 
 SRC			=	./src/Main.cpp		\
+				./client_gui/Client.cpp		\
+				./src/Commands.cpp			\
 
 OBJ			=	$(SRC:.cpp=.o)
 
