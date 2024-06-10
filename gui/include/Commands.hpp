@@ -12,6 +12,7 @@
     #include <vector>
     #include <mutex>
     #include <asio.hpp>
+    #include <unordered_map>
 
 class CommandManager {
 
@@ -21,20 +22,42 @@ class CommandManager {
         void sendCommand(const std::string &command);
         void receiveResponse(const std::string &response);
 
+        // a bit of parsing
+
+        bool replaceOrAddPlayerInfos(std::vector<std::vector<std::string>> &cmdList,
+            const std::vector<std::string> &params);
+        void replaceOrAdd(std::vector<std::vector<std::string>> &cmdList,
+            const std::vector<std::string> &params);
+        std::vector<std::string> strToVec(const std::string &input, char token);
+
+        // get
+
         std::vector<std::string> getSentCommands() const;
         std::vector<std::string> getReceivedResponses() const;
         std::vector<std::vector<std::string>> getMszCmd() const;
 
-        std::vector<std::string> strToVec(const std::string &input, char token);
+        std::unordered_map<std::string, std::vector<std::vector<std::string>>> getMap();
+        std::vector<std::string> getCommandAt(const std::string &cmd, std::size_t index);
+        std::string getCommandInfoAt(const std::string& cmd,
+            std::size_t vectorIndex, std::size_t elementIndex);
+        std::vector<std::vector<std::string>> _ppoCmd;
+        void addCommand(const std::string &cmd, std::vector<std::vector<std::string>> &cmdVec,
+            const std::vector<std::string> &params);
+
 
     private:
+
+        // map for GUI
+
+        std::unordered_map<std::string, std::vector<std::vector<std::string>>> _cmdMap;
+
+        // Data from Serv
 
         std::vector<std::vector<std::string>> _bctCmd;
         std::vector<std::vector<std::string>> _mszCmd; // CORE
         std::vector<std::vector<std::string>> _tnaCmd;
 
 
-        std::vector<std::vector<std::string>> _ppoCmd;
         std::vector<std::vector<std::string>> _plvCmd;
         std::vector<std::vector<std::string>> _pinCmd; // Player info
         std::vector<std::vector<std::string>> _pnwCmd;
