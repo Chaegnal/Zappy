@@ -10,8 +10,8 @@
 
 CommandManager::CommandManager()
 {
-    _cmdMap["bct"] = _bctCmd;
     _cmdMap["msz"] = _mszCmd;
+    _cmdMap["bct"] = _bctCmd;
     _cmdMap["tna"] = _tnaCmd;
     _cmdMap["plv"] = _plvCmd;
     _cmdMap["pin"] = _plvCmd;
@@ -37,31 +37,43 @@ void CommandManager::receiveResponse(const std::string &response)
     if (cmd.compare("msz") == 0) {
         _mszCmd.push_back(params);
     } else if (cmd.compare("bct") == 0) {
-        _bctCmd.push_back(params);
+        fillMapIsland("bct", _bctCmd, params);
     } else if (cmd.compare("tna") == 0) {
-        _tnaCmd.push_back(params);
+        fillMapPlayerInfos("tna", _tnaCmd, params);
     } else if (cmd.compare("pnw") == 0) {
-        addCommand("pnw", _pnwCmd, params);
+        fillMapPlayerInfos("pnw", _pnwCmd, params);
     } else if (cmd.compare("pdi") == 0) {
-        _pdiCmd.push_back(params);
+        fillMapPlayerInfos("pdi", _pdiCmd, params);
     } else if (cmd.compare("plv") == 0) {
-        replaceOrAdd(_plvCmd, params);
+        fillMapPlayerInfos("plv", _plvCmd, params);
     } else if (cmd.compare("pin") == 0) {
-        replaceOrAdd(_pinCmd, params);
+        fillMapPlayerInfos("pin", _pinCmd, params);
     } else if (cmd.compare("ppo") == 0) {
-        addCommand("ppo", _ppoCmd, params);
+        fillMapPlayerInfos("ppo", _ppoCmd, params);
     }
 
     std::cout << response << std::endl;
 }
 
-void CommandManager::addCommand(const std::string &cmd, std::vector<std::vector<std::string>> &cmdVec, const std::vector<std::string> &params)
+void CommandManager::fillMapPlayerInfos(const std::string &cmd, std::vector<std::vector<std::string>> &cmdVec, const std::vector<std::string> &params)
 {
     if (replaceOrAddPlayerInfos(cmdVec, params) == true) {
         _cmdMap[cmd].pop_back();
         _cmdMap[cmd].push_back(params);
         return;
-   }
+    }
+
+    _cmdMap[cmd].push_back(params);
+}
+
+void CommandManager::fillMapIsland(const std::string &cmd, std::vector<std::vector<std::string>> &cmdVec, const std::vector<std::string> &params)
+{
+    if (replaceOrAdd(cmdVec, params) == true) {
+        _cmdMap[cmd].pop_back();
+        _cmdMap[cmd].push_back(params);
+        return;
+    }
+
     _cmdMap[cmd].push_back(params);
 }
 
@@ -75,21 +87,28 @@ bool CommandManager::replaceOrAddPlayerInfos(std::vector<std::vector<std::string
         }
     }
     cmdList.push_back(params);
+
     return false;
 }
 
-
-void CommandManager::replaceOrAdd(std::vector<std::vector<std::string>> &cmdList,
+bool CommandManager::replaceOrAdd(std::vector<std::vector<std::string>> &cmdList,
     const std::vector<std::string> &params)
 {
+    if (params.size() < 2) {
+        throw std::invalid_argument("params must have at least 2 elements");
+    }
+
     for (auto &item : cmdList) {
-        if ((!item.empty() && item.at(0) == params.at(0)) && item.at(1) == params.at(1)) {
+        if (item.size() >= 2 && item.at(0) == params.at(0) && item.at(1) == params.at(1)) {
             item = params;
-            return;
+            return true;
         }
     }
     cmdList.push_back(params);
+
+    return false;
 }
+
 
 std::vector<std::string> CommandManager::getSentCommands() const
 {

@@ -26,7 +26,7 @@ class CommandManager {
 
         bool replaceOrAddPlayerInfos(std::vector<std::vector<std::string>> &cmdList,
             const std::vector<std::string> &params);
-        void replaceOrAdd(std::vector<std::vector<std::string>> &cmdList,
+        bool replaceOrAdd(std::vector<std::vector<std::string>> &cmdList,
             const std::vector<std::string> &params);
         std::vector<std::string> strToVec(const std::string &input, char token);
 
@@ -40,10 +40,12 @@ class CommandManager {
         std::vector<std::string> getCommandAt(const std::string &cmd, std::size_t index);
         std::string getCommandInfoAt(const std::string& cmd,
             std::size_t vectorIndex, std::size_t elementIndex);
-        std::vector<std::vector<std::string>> _ppoCmd;
-        void addCommand(const std::string &cmd, std::vector<std::vector<std::string>> &cmdVec,
-            const std::vector<std::string> &params);
 
+        void fillMapPlayerInfos(const std::string &cmd, std::vector<std::vector<std::string>> &cmdVec,
+            const std::vector<std::string> &params);
+        void fillMapIsland(const std::string &cmd, std::vector<std::vector<std::string>> &cmdVec,
+            const std::vector<std::string> &params);
+        std::vector<std::vector<std::string>> _bctCmd;
 
     private:
 
@@ -53,11 +55,11 @@ class CommandManager {
 
         // Data from Serv
 
-        std::vector<std::vector<std::string>> _bctCmd;
         std::vector<std::vector<std::string>> _mszCmd; // CORE
         std::vector<std::vector<std::string>> _tnaCmd;
 
 
+        std::vector<std::vector<std::string>> _ppoCmd;
         std::vector<std::vector<std::string>> _plvCmd;
         std::vector<std::vector<std::string>> _pinCmd; // Player info
         std::vector<std::vector<std::string>> _pnwCmd;
