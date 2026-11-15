@@ -10,7 +10,7 @@
 
 </div>
 
-<p align="center"><img src=".github/assets/zappy-gui.jpg" alt="The Zappy 3D viewer showing the world, its players and resources" width="860"/></p>
+<p align="center"><img src=".github/assets/zappy-gui.gif" alt="The Zappy 3D viewer: players flying over islands and resources" width="720"/></p>
 <p align="center"><sub>The 3D viewer connected to a live server: 6 players, resources scattered across the map.</sub></p>
 
 
